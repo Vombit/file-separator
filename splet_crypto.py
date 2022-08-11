@@ -8,7 +8,7 @@ with open('mykey.key', 'wb') as mykey:
 
 f_key = Fernet(key)
 
-filename = "[SHIZA Project] Takt Op. Destiny TV [10].mkv"
+filename = "test.png"
 chunks = 10
 
 file_size = 0
