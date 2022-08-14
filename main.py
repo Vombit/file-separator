@@ -5,24 +5,45 @@ import design  # Это наш конвертированный файл диз�
 import os
 class ExampleApp(QtWidgets.QMainWindow, design.Ui_MainWindow):
     def __init__(self):
-        # Это здесь нужно для доступа к переменным, методам
-        # и т.д. в файле design.py
         super().__init__()
-        self.setupUi(self)  # Это нужно для инициализации нашего дизайна
+        self.setupUi(self)
 
 
         self.select_end_dir.clicked.connect(self.output_folder)
+        self.select_filename.clicked.connect(self.first_file)
+        
+        self.select_count_chunks.valueChanged.connect(self.couts_chunks)
+
+        self.start_chunks_split.clicked.connect(self.start_chunk_split)
+        
 
 
 
 
     def output_folder(self):
         self.line_end_dir.clear()
-        filename_path = QtWidgets.QFileDialog.getOpenFileUrl(self, "Выберите папку")
-    
+        filename_path = QtWidgets.QFileDialog.getExistingDirectory(self, "Выберите папку")
         if filename_path:
-            print(filename_path)
-            # self.line_end_dir.text(filename_path)
+            self.line_end_dir.setText(filename_path)
+    def first_file(self):
+        self.line_filename.clear()
+        filename = QtWidgets.QFileDialog.getOpenFileName(self, "Выберите файл")
+        
+        if filename:
+            self.line_filename.setText(filename[0])
+
+    def couts_chunks(self):
+        count_test = self.select_count_chunks.value()
+
+        return count_test
+
+    def start_chunk_split(self):
+        print(self.line_filename.text())
+        print(self.line_end_dir.text())
+        print(self.couts_chunks())
+
+
+
 
 def main():
     app = QtWidgets.QApplication(sys.argv)  # Новый экземпляр QApplication
