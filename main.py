@@ -24,6 +24,17 @@ class ExampleApp(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.start_chunks_split.clicked.connect(self.start_chunk_split)
         self.start_size_split.clicked.connect(self.start_size_splits)
         
+
+        self.select_dir_file.clicked.connect(self.files_dir)
+        self.select_pathKey.clicked.connect(self.pathKey)
+        self.select_dir_endl.clicked.connect(self.dir_endl)
+
+        self.line_endles_filename.textChanged.connect(self.endles_filename)
+
+
+        self.start_button_3.clicked.connect(self.glue_start)
+
+
     def output_folder(self):
         self.line_end_dir.clear()
         filename_path = QtWidgets.QFileDialog.getExistingDirectory(self, "Выберите папку")
@@ -35,6 +46,37 @@ class ExampleApp(QtWidgets.QMainWindow, design.Ui_MainWindow):
         
         if filename:
             self.line_filename.setText(filename[0])
+
+    def files_dir(self):
+        self.line_dir_file.clear()
+        filename_path = QtWidgets.QFileDialog.getExistingDirectory(self, "Выберите папку")
+        if filename_path:
+            self.line_dir_file.setText(filename_path)
+    def pathKey(self):
+        self.line_pathKey.clear()
+        filename = QtWidgets.QFileDialog.getOpenFileName(self, "Выберите файл")
+        if filename:
+            self.line_pathKey.setText(filename[0])
+    def dir_endl(self):
+        self.line_dir_endl.clear()
+        filename_path = QtWidgets.QFileDialog.getExistingDirectory(self, "Выберите папку")
+        if filename_path:
+            self.line_dir_endl.setText(filename_path)
+    def endles_filename(self):
+        count_test = self.line_endles_filename.text()
+        return count_test
+
+    def glue_start(self):
+        path_files = self.line_dir_file.text()
+        path_key = self.line_pathKey.text()
+        end_filename = self.endles_filename()
+        output_dir = self.line_dir_endl.text()
+
+        if path_files:
+            self.decryptos(path_files, path_key, end_filename, output_dir)
+
+
+
 
     def couts_chunks(self):
         count_test = self.select_count_chunks.value()
@@ -101,6 +143,28 @@ class ExampleApp(QtWidgets.QMainWindow, design.Ui_MainWindow):
                     self.complite_bar.setValue(int(100/all_cnk_cnt*i))
                     with open(f'{path_out}/{i}', 'wb') as f:
                         f.write(f_key.encrypt(fr.read(chunks_size)))
+
+    def decryptos(self, path_files, path_key, end_filename, output_dir):
+
+        with open(path_key, 'rb') as mykey:
+            key = mykey.read()
+        self.complite_bar.setValue(5)
+
+        f_key = Fernet(key)
+        arr = os.listdir(path_files)
+        i = 0
+        self.complite_bar.setValue(20)
+        for item in arr:
+            i+=1
+            with open(f'{output_dir}/{end_filename}', 'ab') as file:
+                with open(f'{path_files}/{item}', 'rb') as f:
+                    file.write(f_key.decrypt(f.read()))
+
+
+        self.complite_bar.setValue(100)
+
+
+
 
 def main():
     app = QtWidgets.QApplication(sys.argv)  # Новый экземпляр QApplication
